@@ -1,0 +1,27 @@
+<!-- register.component.html -->
+<div class="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+  <div class="bg-white shadow-md rounded-xl p-8 w-full max-w-md">
+    <h2 class="text-2xl font-bold mb-6 text-center">Registro</h2>
+
+    <div class="block mb-4">
+      <span class="text-sm font-medium">Correo electrónico o celular</span>
+      <input pInputText type="text" [(ngModel)]="identifier" class="w-full mt-1" />
+    </div>
+
+    <div class="block mb-4">
+      <span class="text-sm font-medium">Contraseña</span>
+      <input pPassword [(ngModel)]="password" class="w-full mt-1" toggleMask [feedback]="false" />
+    </div>
+
+    <div class="block mb-6">
+      <span class="text-sm font-medium">Confirmar contraseña</span>
+      <input pPassword [(ngModel)]="confirmPassword" class="w-full mt-1" toggleMask [feedback]="false" />
+    </div>
+
+    <button pButton type="button" label="Registrarse" class="w-full" (click)="register()"></button>
+
+    <div class="mt-4 text-center">
+      <a routerLink="/login" class="text-blue-600 hover:underline text-sm">¿Ya tienes cuenta? Inicia sesión</a>
+    </div>
+  </div>
+</div>

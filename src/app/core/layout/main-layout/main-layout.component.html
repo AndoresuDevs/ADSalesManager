@@ -1,0 +1,28 @@
+<!-- TOOLBAR -->
+<div class="toolbar" [class.shifted]="drawerOpen">
+    <div class="start-content">
+        <p-button (click)="toggleDrawer()" icon="pi pi-bars" severity="secondary" text />
+        <p-breadcrumb [model]="breadcrumbItems" [home]="home" styleClass="border-none surface-ground"></p-breadcrumb>
+    </div>
+    <!-- <div class="end-content">
+        <p-button (click)="toggleTheme()" icon="pi pi-moon" label="Dark Mode"></p-button>
+    </div> -->
+</div>
+
+<!-- LEFT SIDEBAR -->
+<p-card class="drawer" [class.open]="drawerOpen">
+    <div class="drawer-header">
+        <img src="img/logo.png" alt="Logo" class="h-12 w-48">
+    </div>
+    <div class="justify-center p-2">
+        <p-panelmenu [model]="items" styleClass="w-full" />
+    </div>
+</p-card>
+
+<!-- MAIN CONTENT -->
+<div class="main-content" [class.shifted]="drawerOpen">
+    <div class="p-2">
+        <router-outlet />
+    </div>
+</div>
+
