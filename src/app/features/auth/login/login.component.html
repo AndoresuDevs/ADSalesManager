@@ -1,0 +1,31 @@
+<!-- login.component.html -->
+ 
+<div class="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+  
+  <div class="flex justify-center me-5">
+        <img src="img/logo.png" alt="Logo" class="h-16 w-60">
+  </div>
+  <div class="bg-white shadow-md rounded-xl p-8 w-full max-w-md">
+
+    
+    <h3 class="text-2xl font-bold mt-4 mb-6 text-center">Iniciar sesión</h3>
+
+    <div class="block mt-6 mb-4">
+      <span class="text-sm font-medium">Correo electrónico o celular</span>
+      <input pInputText type="text" [(ngModel)]="identifier" class="w-full mt-1" />
+    </div>
+
+    <div class="block mb-4">
+      <span class="text-sm font-medium">Contraseña</span>
+      <input pPassword [(ngModel)]="password" class="w-full mt-1" toggleMask [feedback]="false"/>
+    </div>
+
+    <div class="flex justify-center mb-4">
+        <button pButton type="button" label="Ingresar" class="w-80 mt-2" (click)="login()"></button>
+    </div>
+
+    <div class="mt-4 text-center">
+      <a routerLink="/register" class="text-blue-600 hover:underline text-sm">¿No tienes cuenta? Regístrate</a>
+    </div>
+  </div>
+</div>
