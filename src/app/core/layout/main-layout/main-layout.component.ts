@@ -45,7 +45,7 @@ export class MainLayoutComponent implements OnInit {
   ) {
     this.items = [
       {
-        label:'Home',
+        label:'Inicio',
         icon: 'pi pi-fw pi-home',
         command: () => {
           this.router.navigate(['/home']);
@@ -53,57 +53,68 @@ export class MainLayoutComponent implements OnInit {
         }
       },
       {
-        label: 'Files',
-        icon: 'pi pi-file',
+        label:'Punto de Venta',
+        icon: 'pi pi-fw pi-shop',
+        command: () => {
+          this.router.navigate(['/pos']);
+          this.toggleDrawer();
+        }
+      },
+      {
+        label:'Inventario',
+        icon: 'pi pi-fw pi-list-check',
+        command: () => {
+          this.router.navigate(['/inventory']);
+          this.toggleDrawer();
+        }
+      },
+      {
+        label: 'Promociones',
+        icon: 'pi pi-ticket',
+        command: () => {
+          this.router.navigate(['/management/promotions']);
+          this.toggleDrawer();
+        }
+      },
+      {
+        label: 'Administrar',
+        icon: 'pi pi-folder',
         items: [
           {
-            label: 'New',
-            icon: 'pi pi-plus',
+            label: 'Categorias',
+            icon: 'pi pi-tags',
             command: () => {
-              this.toast.success('Navigating', 'Going to Users Management');
+              this.router.navigate(['/management/categories']);
+              this.toggleDrawer();
+            }
+          },
+          {
+            label: 'Usuarios',
+            icon: 'pi pi-users',
+            command: () => {
               this.router.navigate(['/management/users']);
               this.toggleDrawer();
             }
           },
           {
-            label: 'Search',
-            icon: 'pi pi-search',
+            label: 'Roles',
+            icon: 'pi pi-sitemap',
             command: () => {
-              this.toast.info('Navigating', 'Going to Roles Management');
               this.router.navigate(['/management/roles']);
               this.toggleDrawer();
             }
           },
-          {
-            label: 'Print',
-            icon: 'pi pi-print',
-            command: () => {
-              this.toast.info('Navigating', 'Going to Categories Management');
-              this.router.navigate(['/management/categories']);
-              this.toggleDrawer();
-            }
-          }
         ]
       },
       {
-        label: 'Sync',
-        icon: 'pi pi-cloud',
+        label: 'Reportes',
+        icon: 'pi pi-chart-line',
         items: [
           {
-            label: 'Import',
-            icon: 'pi pi-cloud-download',
+            label: 'Ventas',
+            icon: 'pi pi-receipt',
             command: () => {
-              this.toast.info('Navigating', 'Going to Sales');
               this.router.navigate(['/sales']);
-              this.toggleDrawer();
-            }
-          },
-          {
-            label: 'Export',
-            icon: 'pi pi-cloud-upload',
-            command: () => {
-              this.toast.info('Navigating', 'Going to Inventory');
-              this.router.navigate(['/inventory']);
               this.toggleDrawer();
             }
           }
