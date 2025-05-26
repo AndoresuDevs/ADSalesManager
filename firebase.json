@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "dist/generic-dashboard/browser",
+    "public": "dist/sales-manager/browser",
     "ignore": [
       "firebase.json",
       "**/.*",
