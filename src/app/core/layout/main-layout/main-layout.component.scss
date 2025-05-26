@@ -1,0 +1,115 @@
+.drawer {
+  position: fixed;
+  top: 0;
+  left: -250px;
+  width: 250px;
+  height: 100vh;
+  background-color: var(--surface-card);
+  z-index: 1001;
+  transition: left 0.3s ease;
+
+  .drawer-header {
+    padding: 1rem;
+    border-bottom: 1px solid var(--surface-border);
+    margin-bottom: 1rem;
+    
+    h2 {
+      margin: 0;
+      color: var(--primary-color);
+      font-size: 1.5rem;
+      text-align: center;
+      font-weight: 600;
+    }
+  }
+
+  ::ng-deep .p-card {
+    height: 100%;
+    border-radius: 0;
+    
+    .p-card-body {
+      height: 100%;
+      padding: 0;
+      width: 100%;
+
+      ::ng-deep .p-panelmenu {
+        width: 100%;
+        height: 100%;
+      }
+    }
+  }
+}
+
+.drawer.open {
+  left: 0;
+}
+
+.main-content {
+  transition: all 0.3s ease;
+  margin-left: 0;
+  margin-top: 4rem; /* Add space for the fixed toolbar */
+  padding: 1rem;
+  width: 100%;
+  min-height: calc(100vh - 4rem);
+  box-sizing: border-box;
+}
+
+.main-content.shifted {
+  margin-left: 250px; /* Adjust based on drawer width */
+  width: calc(100% - 250px);
+}
+
+.toolbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  transition: all 0.3s ease;
+  background-color: var(--surface-card);
+  height: 4rem;
+  padding: 0 1rem;
+  box-sizing: border-box;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  .start-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    height: 100%;
+
+    ::ng-deep {
+      .p-breadcrumb {
+        border: none;
+        padding: 0;
+        background: transparent;
+
+        .p-breadcrumb-home {
+          color: var(--primary-color);
+        }
+
+        .p-menuitem-link {
+          &:hover {
+            text-decoration: none;
+            .p-menuitem-text {
+              color: var(--primary-color);
+            }
+          }
+        }
+
+        .p-breadcrumb-chevron {
+          margin: 0 0.5rem;
+        }
+      }
+    }
+  }
+
+  .end-content {
+    display: flex;
+    align-items: center;
+  }
+}
+
+.toolbar.shifted {
+  left: 250px;
+  width: calc(100% - 250px);
+}
