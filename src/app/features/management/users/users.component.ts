@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
+import { DevelopementComponent } from "../../../core/layout/developement/developement.component";
 
 @Component({
   selector: 'app-users',
-  imports: [],
+  imports: [DevelopementComponent],
   templateUrl: './users.component.html',
   styleUrl: './users.component.scss'
 })

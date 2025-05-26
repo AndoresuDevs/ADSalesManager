@@ -5,6 +5,7 @@ import { TableModule } from 'primeng/table';
 import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';
 import { ButtonModule } from 'primeng/button';
+import { DevelopementComponent } from "../../core/layout/developement/developement.component";
 
 @Component({
   selector: 'app-inventory',
@@ -14,7 +15,8 @@ import { ButtonModule } from 'primeng/button';
     TableModule,
     InputTextModule,
     DropdownModule,
-    ButtonModule
+    ButtonModule,
+    DevelopementComponent,
   ],
   templateUrl: './inventory.component.html',
   styleUrl: './inventory.component.scss'
