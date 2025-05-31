@@ -16,6 +16,11 @@
 
 body {
   transition: background-color 0.5s ease, color 0.5s ease;
+  background-color: #f7f7f7;
+}
+
+:root {
+  --surface-ground: #f7f7f7;
 }
 
 // Typography
