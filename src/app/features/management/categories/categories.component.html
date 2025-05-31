@@ -1,8 +1,8 @@
-<div class="categories-container">
+<div class="custom-container">
     <!-- Header with Add Button -->
-    <p-card  class="mb-2">
+    <p-card class="m-1">
         <div class="flex justify-content-between header-section">
-            <h2>Administrar Categorias</h2>
+            <h3>Administrar Categorias</h3>
             <p-button 
                 label="Agregar Categoria" 
                 icon="pi pi-plus" 
@@ -14,7 +14,7 @@
     </p-card>
 
     <!-- Filters and Table -->    
-    <p-card header="Lista de Categorias" class="mb-4">
+    <p-card header="Lista de Categorias" class="m-1">
         <div class="table-section">
             <p-table
             [value]="applyFilters()" 

@@ -6,6 +6,7 @@
 :root {
   font-family: var(--font-family);
   font-size: var(--font-size-base);
+  --surface-ground: #f7f7f7;
 }
 
 // Transicion entre modo claro y obscuro
@@ -17,33 +18,16 @@
 body {
   transition: background-color 0.5s ease, color 0.5s ease;
   background-color: #f7f7f7;
-}
-
-:root {
-  --surface-ground: #f7f7f7;
-}
-
-// Typography
-h1 {
-  font-size: var(--font-size-h1);
-  margin-bottom: 1rem;
-}
-
-h2 {
-  font-size: var(--font-size-h2);
-  margin-bottom: 0.75rem;
-}
-
-h3 {
-  font-size: var(--font-size-h3);
-  margin-bottom: 0.5rem;
-}
-
-body {
   font-size: var(--font-size-body);
 }
 
 .text-small {
   font-size: var(--font-size-small);
+}
+
+/* Clase personalizada global */
+.custom-container {
+  margin-left: 2.5 rem auto;
+  margin-right: 2.5 rem auto;
 }
 
