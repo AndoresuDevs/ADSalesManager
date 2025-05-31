@@ -43,6 +43,11 @@ export const routes: Routes = [
                 loadComponent: () => import('./features/sales/sales.component').then(m => m.SalesComponent)
             },
             {
+                path: 'promotions',
+                canActivate: [AuthGuard],
+                loadComponent: () => import('./features/promotions/promotions.component').then(m => m.PromotionsComponent)
+            },
+            {
                 path: 'management',
                 canActivate: [AuthGuard],
                 loadComponent: () => import('./features/management/management.component').then(m => m.ManagementComponent),

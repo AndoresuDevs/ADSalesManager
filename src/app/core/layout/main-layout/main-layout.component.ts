@@ -72,7 +72,7 @@ export class MainLayoutComponent implements OnInit {
         label: 'Promociones',
         icon: 'pi pi-ticket',
         command: () => {
-          this.router.navigate(['/management/promotions']);
+          this.router.navigate(['/promotions']);
           this.toggleDrawer();
         }
       },
