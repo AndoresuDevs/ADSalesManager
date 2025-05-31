@@ -1,1 +1,188 @@
-<app-developement [title]="'ROLES MODULE'"></app-developement>
+<div class="custom-container">
+    <!-- Header with Add Button -->
+    <p-card class="m-1">
+        <div class="flex justify-content-between header-section">
+            <h3>Administrar Roles</h3>
+            <p-button 
+                label="Agregar Rol" 
+                icon="pi pi-plus" 
+                (onClick)="showCreateDialog()"
+                [rounded]="true" 
+                severity="success">
+            </p-button>
+        </div>
+    </p-card>
+
+    <!-- Filters and Table -->    
+    <p-card header="Lista de Categorias" class="m-1">
+        <div class="table-section">
+            <p-table 
+                [value]="applyFilters()" 
+                [paginator]="true" 
+                [rows]="10"
+                [showCurrentPageReport]="true"
+                currentPageReportTemplate="Mostrando {first} - {last} de {totalRecords} roles"
+                [rowsPerPageOptions]="[10, 25, 50]"
+                styleClass="p-datatable-gridlines">
+                
+                <!-- Filters Section -->
+                <ng-template pTemplate="caption">
+                    <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-2">
+                        <div class="md:col-span-2 xl:col-span-3">
+                            <p-iconfield>
+                                <p-inputicon styleClass="pi pi-search" />
+                                <input type="text" pInputText [(ngModel)]="filterValue" placeholder="Buscar por coincidencias" class="w-100"/>
+                            </p-iconfield>
+                        </div>
+                        <div class="md:col-span-2 xl:col-span-1">
+                            <p-select [options]="statusOptions" [(ngModel)]="selectedStatus" optionLabel="name" optionValue="value" [showClear]="true" placeholder="Seleccione un Estatus" class="w-full" />
+                        </div>
+                    </div>
+                </ng-template>            <ng-template pTemplate="header">
+                    <tr>
+                        <th pSortableColumn="id">ID <p-sortIcon field="id"></p-sortIcon></th>
+                        <th pSortableColumn="name">Nombre <p-sortIcon field="name"></p-sortIcon></th>
+                        <th pSortableColumn="description">Descripción <p-sortIcon field="description"></p-sortIcon></th>
+                        <th pSortableColumn="isActive">Estatus <p-sortIcon field="isActive"></p-sortIcon></th>
+                        <th style="width: 8rem">Acciones</th>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-role>
+                    <tr>
+                        <td>{{role.id}}</td>
+                        <td>{{role.name}}</td>
+                        <td>{{role.description}}</td>
+                        <td>
+                            <span [class]="role.isActive ? 'status-active' : 'status-inactive'">
+                                {{role.isActive | isActive }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="flex gap-2">
+                                <button 
+                                    pButton 
+                                    icon="pi pi-pencil" 
+                                    class="p-button-rounded p-button-warning" 
+                                    (click)="showEditDialog(role)"
+                                    pTooltip="Editar Rol">
+                                </button>
+                                <button 
+                                    pButton 
+                                    icon="pi pi-trash" 
+                                    class="p-button-rounded p-button-danger" 
+                                    (click)="deleteRole(role)"
+                                    pTooltip="Eliminar Rol">
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="5">No se encontraron roles.</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </p-card>
+</div>
+
+<!-- Create/Edit Dialog -->
+<p-dialog 
+    [(visible)]="displayDialog" 
+    [header]="dialogMode === 'create' ? 'Crear Rol' : 'Editar Rol'"
+    [modal]="true" 
+    [style]="{ width: '450px' }" 
+    [draggable]="false" 
+    [resizable]="false">
+      <div class="flex flex-column gap-3">
+        <div class="flex flex-column gap-2">
+            <label htmlFor="id">ID</label>
+            <input 
+                pInputText 
+                id="id"
+                [(ngModel)]="newRole.id" 
+                [disabled]="dialogMode === 'edit'"
+                required 
+                autofocus />
+        </div>
+
+        <div class="flex flex-column gap-2">
+            <label htmlFor="name">Nombre</label>
+            <input 
+                pInputText 
+                id="name"
+                [(ngModel)]="newRole.name" 
+                required 
+                [ngClass]="{'ng-invalid ng-dirty': !newRole.name && newRole.name !== undefined}" />
+        </div>
+
+        <div class="flex flex-column gap-2">
+            <label htmlFor="description">Descripción</label>
+            <input 
+                pInputText 
+                id="description"
+                [(ngModel)]="newRole.description" />
+        </div>
+
+        <div class="flex align-items-center gap-2">
+            <p-checkbox 
+                [(ngModel)]="newRole.isActive" 
+                [binary]="true" 
+                inputId="isActive">
+            </p-checkbox>
+            <label for="isActive" class="ml-2">Activo</label>
+        </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+        <button 
+            pButton 
+            label="Cancelar" 
+            icon="pi pi-times" 
+            (click)="displayDialog=false" 
+            class="p-button-text">
+        </button>
+        <button 
+            pButton 
+            label="Guardar" 
+            icon="pi pi-check" 
+            (click)="saveRole()" 
+            [disabled]="!newRole.name">
+        </button>
+    </ng-template>
+</p-dialog>
+
+<!-- Delete Confirmation Dialog -->
+<p-dialog 
+    [(visible)]="displayDeleteDialog" 
+    header="Confirmar Eliminación"
+    [modal]="true" 
+    [style]="{ width: '450px' }" 
+    [draggable]="false" 
+    [resizable]="false">
+    
+    <div class="flex flex-column gap-3">
+        <p>¿Está seguro que desea eliminar el rol "{{selectedRole?.name}}"?</p>
+        <p class="text-sm text-gray-500">Esta acción no se puede deshacer.</p>
+    </div>
+
+    <ng-template pTemplate="footer">
+        <button 
+            pButton 
+            label="Cancelar" 
+            icon="pi pi-times" 
+            (click)="displayDeleteDialog=false" 
+            class="p-button-text">
+        </button>
+        <button 
+            pButton 
+            label="Eliminar" 
+            icon="pi pi-trash" 
+            (click)="confirmDelete()" 
+            severity="danger">
+        </button>
+    </ng-template>
+</p-dialog>
