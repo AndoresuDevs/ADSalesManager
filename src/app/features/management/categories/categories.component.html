@@ -1,85 +1,91 @@
-<div class="px-4" >
+<div class="categories-container">
     <!-- Header with Add Button -->
-    <div class="flex justify-content-between">
-        <h2>Administrar Categorias</h2>
-        <p-button 
-            label="Agregar Categoria" 
-            icon="pi pi-plus" 
-            (onClick)="showCreateDialog()"
-            [rounded]="true" 
-            severity="success">
-        </p-button>
-    </div>
+    <p-card  class="mb-2">
+        <div class="flex justify-content-between header-section">
+            <h2>Administrar Categorias</h2>
+            <p-button 
+                label="Agregar Categoria" 
+                icon="pi pi-plus" 
+                (onClick)="showCreateDialog()"
+                [rounded]="true" 
+                severity="success">
+            </p-button>
+        </div>
+    </p-card>
 
     <!-- Filters and Table -->    
-     <p-table 
-        [value]="applyFilters()" 
-        [paginator]="true" 
-        [rows]="10"
-        [showCurrentPageReport]="true"
-        currentPageReportTemplate="Mostrando {first} - {last} de {totalRecords} categorias"
-        [rowsPerPageOptions]="[10, 25, 50]"
-        styleClass="p-datatable-gridlines">
-        
-        <!-- Filters Section -->
-        <ng-template pTemplate="caption">
-            <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-2">
-                <div class="md:col-span-2 xl:col-span-3">                    <p-iconfield>
-                        <p-inputicon styleClass="pi pi-search" />
-                        <input type="text" pInputText [(ngModel)]="filterValue" placeholder="Buscar por coincidencias" class="w-100"/>
-                    </p-iconfield>
-                </div>
-                <div class="md:col-span-2 xl:col-span-1">
-                    <p-select [options]="statusOptions" [(ngModel)]="selectedStatus" optionLabel="name" optionValue="value" [showClear]="true" placeholder="Seleccione un Estatus" class="w-full" />
-                </div>
-            </div>
-        </ng-template>
-
-        <ng-template pTemplate="header">
-            <tr>
-                <th pSortableColumn="name">Nombre <p-sortIcon field="name"></p-sortIcon></th>
-                <th pSortableColumn="description">Descripcion <p-sortIcon field="description"></p-sortIcon></th>
-                <th pSortableColumn="IsActive">Estatus <p-sortIcon field="IsActive"></p-sortIcon></th>
-                <th style="width: 8rem">Acciones</th>
-            </tr>
-        </ng-template>
-
-        <ng-template pTemplate="body" let-category>
-            <tr>
-                <td>{{category.name}}</td>
-                <td>{{category.description}}</td>
-                <td>
-                    <span [class]="category.IsActive ? 'status-active' : 'status-inactive'">
-                        {{category.IsActive | isActive }}
-                    </span>
-                </td>
-                <td>
-                    <div class="flex gap-2">
-                        <button 
-                            pButton 
-                            icon="pi pi-pencil" 
-                            class="p-button-rounded p-button-warning" 
-                            (click)="showEditDialog(category)"
-                            pTooltip="Edit Category">
-                        </button>
-                        <button 
-                            pButton 
-                            icon="pi pi-trash" 
-                            class="p-button-rounded p-button-danger" 
-                            (click)="deleteCategory(category)"
-                            pTooltip="Delete Category">
-                        </button>
+    <p-card header="Lista de Categorias" class="mb-4">
+        <div class="table-section">
+            <p-table
+            [value]="applyFilters()" 
+            [paginator]="true" 
+            [rows]="10"
+            [showCurrentPageReport]="true"
+            currentPageReportTemplate="Mostrando {first} - {last} de {totalRecords} categorias"
+            [rowsPerPageOptions]="[10, 25, 50]"
+            styleClass="p-datatable-gridlines">
+            
+            <!-- Filters Section -->
+            <ng-template pTemplate="caption">
+                <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-2">
+                    <div class="md:col-span-2 xl:col-span-3">                    <p-iconfield>
+                            <p-inputicon styleClass="pi pi-search" />
+                            <input type="text" pInputText [(ngModel)]="filterValue" placeholder="Buscar por coincidencias" class="w-100"/>
+                        </p-iconfield>
                     </div>
-                </td>
-            </tr>
-        </ng-template>
+                    <div class="md:col-span-2 xl:col-span-1">
+                        <p-select [options]="statusOptions" [(ngModel)]="selectedStatus" optionLabel="name" optionValue="value" [showClear]="true" placeholder="Seleccione un Estatus" class="w-full" />
+                    </div>
+                </div>
+            </ng-template>
 
-        <ng-template pTemplate="emptymessage">
-            <tr>
-                <td colspan="4">No categories found.</td>
-            </tr>
-        </ng-template>
-    </p-table>
+            <ng-template pTemplate="header">
+                <tr>
+                    <th pSortableColumn="name">Nombre <p-sortIcon field="name"></p-sortIcon></th>
+                    <th pSortableColumn="description">Descripcion <p-sortIcon field="description"></p-sortIcon></th>
+                    <th pSortableColumn="IsActive">Estatus <p-sortIcon field="IsActive"></p-sortIcon></th>
+                    <th style="width: 8rem">Acciones</th>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-category>
+                <tr>
+                    <td>{{category.name}}</td>
+                    <td>{{category.description}}</td>
+                    <td>
+                        <span [class]="category.IsActive ? 'status-active' : 'status-inactive'">
+                            {{category.IsActive | isActive }}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="flex gap-2">
+                            <button 
+                                pButton 
+                                icon="pi pi-pencil" 
+                                class="p-button-rounded p-button-warning" 
+                                (click)="showEditDialog(category)"
+                                pTooltip="Edit Category">
+                            </button>
+                            <button 
+                                pButton 
+                                icon="pi pi-trash" 
+                                class="p-button-rounded p-button-danger" 
+                                (click)="deleteCategory(category)"
+                                pTooltip="Delete Category">
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="4">No categories found.</td>
+                </tr>       
+            </ng-template>
+        </p-table>
+        </div>
+    </p-card>
 </div>
 
 <!-- Dialog for Create/Edit -->
@@ -135,6 +141,37 @@
             icon="pi pi-check" 
             (click)="saveCategory()" 
             [disabled]="!newCategory.name">
+        </button>    </ng-template>
+</p-dialog>
+
+<!-- Delete Confirmation Dialog -->
+<p-dialog 
+    [(visible)]="displayDeleteDialog" 
+    header="Confirmar Eliminación"
+    [modal]="true" 
+    [style]="{ width: '450px' }" 
+    [draggable]="false" 
+    [resizable]="false">
+    
+    <div class="flex flex-column gap-3">
+        <p>¿Está seguro que desea eliminar la categoría "{{selectedCategory?.name}}"?</p>
+        <p class="text-sm text-gray-500">Esta acción no se puede deshacer.</p>
+    </div>
+
+    <ng-template pTemplate="footer">
+        <button 
+            pButton 
+            label="Cancelar" 
+            icon="pi pi-times" 
+            (click)="displayDeleteDialog=false" 
+            class="p-button-text">
+        </button>
+        <button 
+            pButton 
+            label="Eliminar" 
+            icon="pi pi-trash" 
+            (click)="confirmDelete()" 
+            severity="danger">
         </button>
     </ng-template>
 </p-dialog>

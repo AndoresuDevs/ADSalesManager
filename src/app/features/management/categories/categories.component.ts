@@ -13,6 +13,7 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { IsActivePipe } from '../../../shared/pipes/is-active.pipe';
 import { SelectModule } from 'primeng/select';
+import { CardModule } from 'primeng/card';
 
 @Component({
   selector: 'app-categories',
@@ -30,18 +31,19 @@ import { SelectModule } from 'primeng/select';
     IconFieldModule,
     InputIconModule,
     IsActivePipe,
-    SelectModule
+    SelectModule,
+    CardModule,
   ],
   templateUrl: './categories.component.html',
   styleUrl: './categories.component.scss'
 })
 export class CategoriesComponent implements OnInit {  categories: Category[] = [];
-  selectedCategory: Category | undefined;
-  statusOptions = [
+  selectedCategory: Category | undefined;  statusOptions = [
       { name: 'Activa', value: "true" },
       { name: 'Inactiva', value: "false" }
   ];
   displayDialog = false;
+  displayDeleteDialog = false;
   dialogMode: 'create' | 'edit' = 'create';
   selectedStatus: { name: string, value: boolean } | null = null;
   filterValue: string = '';
@@ -95,10 +97,18 @@ export class CategoriesComponent implements OnInit {  categories: Category[] = [
     }
     this.displayDialog = false;
   }
-
   deleteCategory(category: Category) {
-    this.categories = this.categories.filter(c => c.id !== category.id);
-    this.toast.warn('Deleted', 'Category has been removed');
+    this.selectedCategory = category;
+    this.displayDeleteDialog = true;
+  }
+
+  confirmDelete() {
+    if (this.selectedCategory) {
+      this.categories = this.categories.filter(c => c.id !== this.selectedCategory?.id);
+      this.toast.warn('Eliminado', 'La categoría ha sido eliminada');
+      this.displayDeleteDialog = false;
+      this.selectedCategory = undefined;
+    }
   }
 
   applyFilters() {
