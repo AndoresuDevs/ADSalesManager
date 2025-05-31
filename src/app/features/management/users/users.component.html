@@ -1,1 +1,230 @@
-<app-developement [title]="'USERS MODULE'"></app-developement>
+<div class="custom-container">
+    <!-- Header with Add Button -->
+    <p-card class="m-1">
+        <div class="flex justify-content-between header-section">
+            <h3>Administrar Usuarios</h3>
+            <p-button 
+                label="Agregar Usuario" 
+                icon="pi pi-plus" 
+                (onClick)="showCreateDialog()"
+                [rounded]="true" 
+                severity="success">
+            </p-button>
+        </div>
+    </p-card>
+
+    <!-- Filters and Table -->    
+    <p-card header="Lista de Usuarios" class="m-1">
+        <div class="table-section">
+            <p-table 
+                [value]="applyFilters()" 
+                [paginator]="true" 
+                [rows]="10"
+                [showCurrentPageReport]="true"
+                currentPageReportTemplate="Mostrando {first} - {last} de {totalRecords} usuarios"
+                [rowsPerPageOptions]="[10, 25, 50]"
+                styleClass="p-datatable-gridlines">
+                
+                <!-- Filters Section -->
+                <ng-template pTemplate="caption">
+                    <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-2">
+                        <div class="md:col-span-2 xl:col-span-3">
+                            <p-iconfield>
+                                <p-inputicon styleClass="pi pi-search" />
+                                <input type="text" pInputText [(ngModel)]="filterValue" placeholder="Buscar por coincidencias" class="w-100"/>
+                            </p-iconfield>
+                        </div>                <div class="md:col-span-2 xl:col-span-1">
+                            <p-dropdown [options]="statusOptions" [(ngModel)]="selectedStatus" optionLabel="name" optionValue="value" [showClear]="true" placeholder="Seleccione un Estatus" class="w-full"></p-dropdown>
+                        </div>
+                    </div>
+                </ng-template>
+
+                <!-- Table Headers -->
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pSortableColumn="name">Nombre <p-sortIcon field="name"></p-sortIcon></th>
+                        <th pSortableColumn="lastName">Apellido <p-sortIcon field="lastName"></p-sortIcon></th>
+                        <th pSortableColumn="email">Email <p-sortIcon field="email"></p-sortIcon></th>
+                        <th pSortableColumn="phone">Teléfono <p-sortIcon field="phone"></p-sortIcon></th>
+                        <th pSortableColumn="roles">Roles <p-sortIcon field="roles"></p-sortIcon></th>
+                        <th pSortableColumn="isActive">Estatus <p-sortIcon field="isActive"></p-sortIcon></th>
+                        <th pSortableColumn="startDate">Fecha Inicio <p-sortIcon field="startDate"></p-sortIcon></th>
+                        <th style="width: 8rem">Acciones</th>
+                    </tr>
+                </ng-template>
+
+                <!-- Table Body -->
+                <ng-template pTemplate="body" let-user>
+                    <tr>
+                        <td>{{user.name}}</td>
+                        <td>{{user.lastName}}</td>
+                        <td>{{user.email}}</td>
+                        <td>{{user.phone}}</td>
+                        <td>{{getRolesForUser(user.roles)}}</td>
+                        <td>
+                            <span [class]="user.isActive ? 'status-active' : 'status-inactive'">
+                                {{user.isActive | isActive }}
+                            </span>
+                        </td>
+                        <td>{{user.startDate | date:'dd/MM/yyyy'}}</td>
+                        <td>
+                            <div class="flex gap-2">
+                                <button 
+                                    pButton 
+                                    icon="pi pi-pencil" 
+                                    class="p-button-rounded p-button-warning" 
+                                    (click)="showEditDialog(user)"
+                                    pTooltip="Editar Usuario">
+                                </button>
+                                <button 
+                                    pButton 
+                                    icon="pi pi-trash" 
+                                    class="p-button-rounded p-button-danger" 
+                                    (click)="deleteUser(user)"
+                                    pTooltip="Eliminar Usuario">
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="8">No se encontraron usuarios.</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </p-card>
+</div>
+
+<!-- Create/Edit Dialog -->
+<p-dialog 
+    [(visible)]="displayDialog" 
+    [header]="dialogMode === 'create' ? 'Crear Usuario' : 'Editar Usuario'"
+    [modal]="true" 
+    [style]="{ width: '450px' }" 
+    [draggable]="false" 
+    [resizable]="false">
+    
+    <div class="flex flex-column gap-3">
+        <div class="grid grid-cols-2 gap-2">
+            <div class="flex flex-column gap-2">
+                <label htmlFor="name">Nombre</label>
+                <input 
+                    pInputText 
+                    id="name"
+                    [(ngModel)]="newUser.name" 
+                    required 
+                    autofocus 
+                    [ngClass]="{'ng-invalid ng-dirty': !newUser.name && newUser.name !== undefined}" />
+            </div>
+
+            <div class="flex flex-column gap-2">
+                <label htmlFor="lastName">Apellido</label>
+                <input 
+                    pInputText 
+                    id="lastName"
+                    [(ngModel)]="newUser.lastName" 
+                    required 
+                    [ngClass]="{'ng-invalid ng-dirty': !newUser.lastName && newUser.lastName !== undefined}" />
+            </div>
+        </div>
+
+        <div class="flex flex-column gap-2">
+            <label htmlFor="email">Email</label>
+            <input 
+                pInputText 
+                id="email"
+                [(ngModel)]="newUser.email" 
+                type="email" />
+        </div>
+
+        <div class="flex flex-column gap-2">
+            <label htmlFor="phone">Teléfono</label>
+            <input 
+                pInputText 
+                id="phone"
+                [(ngModel)]="newUser.phone" />
+        </div>
+
+        <div class="flex flex-column gap-2">
+            <label htmlFor="roles">Roles</label>            <p-multiSelect 
+                [options]="availableRoles" 
+                [(ngModel)]="newUser.roles" 
+                optionLabel="name"
+                optionValue="id"
+                [filter]="true"
+                [showClear]="true"
+                placeholder="Seleccione los roles"
+                class="w-full"></p-multiSelect>
+        </div>
+
+        <div class="flex flex-column gap-2">
+            <label htmlFor="startDate">Fecha de Inicio</label>
+            <p-calendar 
+                [(ngModel)]="newUser.startDate" 
+                dateFormat="dd/mm/yy"
+                [showIcon]="true">
+            </p-calendar>
+        </div>
+
+        <div class="flex align-items-center gap-2">
+            <p-checkbox 
+                [(ngModel)]="newUser.isActive" 
+                [binary]="true" 
+                inputId="isActive">
+            </p-checkbox>
+            <label for="isActive" class="ml-2">Activo</label>
+        </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+        <button 
+            pButton 
+            label="Cancelar" 
+            icon="pi pi-times" 
+            (click)="displayDialog=false" 
+            class="p-button-text">
+        </button>
+        <button 
+            pButton 
+            label="Guardar" 
+            icon="pi pi-check" 
+            (click)="saveUser()" 
+            [disabled]="!newUser.name || !newUser.lastName">
+        </button>
+    </ng-template>
+</p-dialog>
+
+<!-- Delete Confirmation Dialog -->
+<p-dialog 
+    [(visible)]="displayDeleteDialog" 
+    header="Confirmar Eliminación"
+    [modal]="true" 
+    [style]="{ width: '450px' }" 
+    [draggable]="false" 
+    [resizable]="false">
+    
+    <div class="flex flex-column gap-3">
+        <p>¿Está seguro que desea eliminar el usuario "{{selectedUser?.name}} {{selectedUser?.lastName}}"?</p>
+        <p class="text-sm text-gray-500">Esta acción no se puede deshacer.</p>
+    </div>
+
+    <ng-template pTemplate="footer">
+        <button 
+            pButton 
+            label="Cancelar" 
+            icon="pi pi-times" 
+            (click)="displayDeleteDialog=false" 
+            class="p-button-text">
+        </button>
+        <button 
+            pButton 
+            label="Eliminar" 
+            icon="pi pi-trash" 
+            (click)="confirmDelete()" 
+            severity="danger">
+        </button>
+    </ng-template>
+</p-dialog>

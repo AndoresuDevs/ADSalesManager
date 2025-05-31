@@ -1,11 +1,14 @@
 export interface User {
     id: string;
     name: string;
-    email: string;
+    lastName: string;
+    email?: string;
     phone?: string;
-    role: string[];
+    roles: string[];
     isActive: boolean;
     startDate: Date;
+    // salary?: number;
+    // schedule?: string;
 }
 
 export interface role {
