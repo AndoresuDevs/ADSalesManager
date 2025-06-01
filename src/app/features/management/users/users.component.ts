@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
@@ -57,20 +57,44 @@ export class UsersComponent implements OnInit {
   displayDeleteDialog = false;
   dialogMode: 'create' | 'edit' = 'create';
   selectedStatus: { name: string, value: boolean } | null = null;
-  filterValue: string = '';
-  
-  newUser: User = {
-    id: '',
-    name: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    roles: [],
-    isActive: true,
-    startDate: new Date()
-  };
+  filterValue: string = '';  userForm!: FormGroup;
 
-  constructor(private toast: ToastService) {}
+  constructor(private toast: ToastService, private fb: FormBuilder) {
+    this.initForm();
+  }
+
+  private initForm() {
+    this.userForm = this.fb.group({
+      id: [''],
+      name: ['', [Validators.required, Validators.minLength(2)]],
+      lastName: ['', [Validators.required, Validators.minLength(2)]],
+      email: ['', [Validators.email]],
+      phone: ['', [Validators.pattern('^[0-9-]*$')]],
+      roles: [[], [Validators.required, Validators.minLength(1)]],
+      isActive: [true],
+      startDate: [new Date(), Validators.required]
+    });
+  }
+
+  // Helper method for form validation messages
+  getErrorMessage(controlName: string): string {
+    const control = this.userForm.get(controlName);
+    if (!control) return '';
+    
+    if (control.hasError('required')) {
+      return 'Este campo es requerido';
+    }
+    if (control.hasError('minlength')) {
+      return `Mínimo ${control.errors?.['minlength'].requiredLength} caracteres`;
+    }
+    if (control.hasError('email')) {
+      return 'Email inválido';
+    }
+    if (control.hasError('pattern')) {
+      return 'Solo se permiten números y guiones';
+    }
+    return '';
+  }
 
   ngOnInit() {
     // TODO: Replace with actual API call
@@ -100,33 +124,42 @@ export class UsersComponent implements OnInit {
 
   showCreateDialog() {
     this.dialogMode = 'create';
-    this.newUser = {
+    this.userForm.reset({
       id: Date.now().toString(),
-      name: '',
-      lastName: '',
-      email: '',
-      phone: '',
       roles: [],
       isActive: true,
       startDate: new Date()
-    };
+    });
     this.displayDialog = true;
   }
 
   showEditDialog(user: User) {
     this.dialogMode = 'edit';
-    this.newUser = { ...user };
+    this.userForm.patchValue(user);
     this.displayDialog = true;
   }
 
   saveUser() {
+    if (this.userForm.invalid) {
+      Object.keys(this.userForm.controls).forEach(key => {
+        const control = this.userForm.get(key);
+        if (control?.invalid) {
+          control.markAsTouched();
+        }
+      });
+      this.toast.warn('Error', 'Por favor complete todos los campos requeridos correctamente');
+      return;
+    }
+
+    const formValue = this.userForm.value;
+
     if (this.dialogMode === 'create') {
-      this.users = [...this.users, { ...this.newUser }];
+      this.users = [...this.users, formValue];
       this.toast.success('Éxito', 'Usuario creado exitosamente');
     } else {
-      const index = this.users.findIndex(u => u.id === this.newUser.id);
+      const index = this.users.findIndex(u => u.id === formValue.id);
       if (index !== -1) {
-        this.users[index] = { ...this.newUser };
+        this.users[index] = formValue;
         this.users = [...this.users];
         this.toast.success('Éxito', 'Usuario actualizado exitosamente');
       }

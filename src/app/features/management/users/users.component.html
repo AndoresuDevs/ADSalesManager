@@ -107,17 +107,20 @@
     [draggable]="false" 
     [resizable]="false">
     
-    <div class="flex flex-column gap-3">
+    <form [formGroup]="userForm" class="flex flex-column gap-3">
         <div class="grid grid-cols-2 gap-2">
             <div class="flex flex-column gap-2">
                 <label htmlFor="name">Nombre</label>
                 <input 
                     pInputText 
                     id="name"
-                    [(ngModel)]="newUser.name" 
+                    formControlName="name"
                     required 
                     autofocus 
-                    [ngClass]="{'ng-invalid ng-dirty': !newUser.name && newUser.name !== undefined}" />
+                    [ngClass]="{'ng-invalid ng-dirty': userForm.get('name')?.invalid && userForm.get('name')?.touched}" />
+                <small class="text-red-500" *ngIf="userForm.get('name')?.invalid && userForm.get('name')?.touched">
+                    {{ getErrorMessage('name') }}
+                </small>
             </div>
 
             <div class="flex flex-column gap-2">
@@ -125,9 +128,12 @@
                 <input 
                     pInputText 
                     id="lastName"
-                    [(ngModel)]="newUser.lastName" 
+                    formControlName="lastName"
                     required 
-                    [ngClass]="{'ng-invalid ng-dirty': !newUser.lastName && newUser.lastName !== undefined}" />
+                    [ngClass]="{'ng-invalid ng-dirty': userForm.get('lastName')?.invalid && userForm.get('lastName')?.touched}" />
+                <small class="text-red-500" *ngIf="userForm.get('lastName')?.invalid && userForm.get('lastName')?.touched">
+                    {{ getErrorMessage('lastName') }}
+                </small>
             </div>
         </div>
 
@@ -136,8 +142,12 @@
             <input 
                 pInputText 
                 id="email"
-                [(ngModel)]="newUser.email" 
-                type="email" />
+                formControlName="email"
+                type="email"
+                [ngClass]="{'ng-invalid ng-dirty': userForm.get('email')?.invalid && userForm.get('email')?.touched}" />
+            <small class="text-red-500" *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched">
+                {{ getErrorMessage('email') }}
+            </small>
         </div>
 
         <div class="flex flex-column gap-2">
@@ -145,39 +155,53 @@
             <input 
                 pInputText 
                 id="phone"
-                [(ngModel)]="newUser.phone" />
+                formControlName="phone"
+                [ngClass]="{'ng-invalid ng-dirty': userForm.get('phone')?.invalid && userForm.get('phone')?.touched}" />
+            <small class="text-red-500" *ngIf="userForm.get('phone')?.invalid && userForm.get('phone')?.touched">
+                {{ getErrorMessage('phone') }}
+            </small>
         </div>
 
         <div class="flex flex-column gap-2">
-            <label htmlFor="roles">Roles</label>            <p-multiSelect 
+            <label htmlFor="roles">Roles</label>            
+            <p-multiSelect 
                 [options]="availableRoles" 
-                [(ngModel)]="newUser.roles" 
+                formControlName="roles"
                 optionLabel="name"
                 optionValue="id"
                 [filter]="true"
                 [showClear]="true"
                 placeholder="Seleccione los roles"
-                class="w-full"></p-multiSelect>
+                [ngClass]="{'ng-invalid ng-dirty': userForm.get('roles')?.invalid && userForm.get('roles')?.touched}"
+                class="w-full">
+            </p-multiSelect>
+            <small class="text-red-500" *ngIf="userForm.get('roles')?.invalid && userForm.get('roles')?.touched">
+                {{ getErrorMessage('roles') }}
+            </small>
         </div>
 
         <div class="flex flex-column gap-2">
             <label htmlFor="startDate">Fecha de Inicio</label>
             <p-calendar 
-                [(ngModel)]="newUser.startDate" 
+                formControlName="startDate"
                 dateFormat="dd/mm/yy"
-                [showIcon]="true">
+                [showIcon]="true"
+                [ngClass]="{'ng-invalid ng-dirty': userForm.get('startDate')?.invalid && userForm.get('startDate')?.touched}">
             </p-calendar>
+            <small class="text-red-500" *ngIf="userForm.get('startDate')?.invalid && userForm.get('startDate')?.touched">
+                {{ getErrorMessage('startDate') }}
+            </small>
         </div>
 
         <div class="flex align-items-center gap-2">
             <p-checkbox 
-                [(ngModel)]="newUser.isActive" 
+                formControlName="isActive"
                 [binary]="true" 
                 inputId="isActive">
             </p-checkbox>
             <label for="isActive" class="ml-2">Activo</label>
         </div>
-    </div>
+    </form>
 
     <ng-template pTemplate="footer">
         <button 
@@ -192,7 +216,7 @@
             label="Guardar" 
             icon="pi pi-check" 
             (click)="saveUser()" 
-            [disabled]="!newUser.name || !newUser.lastName">
+            [disabled]="userForm.invalid">
         </button>
     </ng-template>
 </p-dialog>
