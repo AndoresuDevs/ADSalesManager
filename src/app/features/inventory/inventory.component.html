@@ -1,22 +1,285 @@
-<div class="flex flex-col md:flex-row gap-4 mb-4">
-  <input type="text" pInputText [(ngModel)]="search" placeholder="Buscar por nombre" class="w-full md:w-64" />
+<div class="custom-container">
+    <!-- Header with Add Button and View Toggle -->
+    <p-card class="m-1">
+        <div class="flex justify-content-between header-section">
+            <h3>Inventario</h3>
+            <div class="flex gap-2">
 
-  <p-dropdown [options]="estados" [(ngModel)]="statusFilter" placeholder="Filtrar por estado" class="w-full md:w-64"></p-dropdown>
+                <p-selectbutton [options]="viewOptions" [(ngModel)]="currentView" optionLabel="value" optionValue="value" aria-labelledby="basic" />
+                <p-button 
+                    label="Agregar Producto" 
+                    icon="pi pi-plus" 
+                    (onClick)="showCreateDialog()"
+                    [rounded]="true" 
+                    severity="success">
+                </p-button>
+            </div>
+        </div>
+    </p-card>
+
+    <!-- Filters Section -->
+    <p-card class="m-1">
+        <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-2">
+            <div class="md:col-span-2 xl:col-span-2">
+                <p-iconfield>
+                    <p-inputicon styleClass="pi pi-search" />
+                    <input type="text" pInputText [(ngModel)]="filterValue" placeholder="Buscar por coincidencias" class="w-100"/>
+                </p-iconfield>
+            </div>
+            <div class="md:col-span-2 xl:col-span-1">
+                <p-select [options]="categories" [(ngModel)]="selectedCategory" optionLabel="name" optionValue="id" placeholder="Seleccione una Categoría" class="w-full md:w-56" [showClear]="true" />
+            </div>
+            <div class="md:col-span-2 xl:col-span-1">
+                <p-select [options]="statusOptions" [(ngModel)]="selectedStatus" optionLabel="name" optionValue="value" placeholder="Seleccione un Estatus" class="w-full md:w-56" [showClear]="true" />
+            </div>
+        </div>
+    </p-card>
+
+    <!-- List View -->
+    <p-card *ngIf="currentView === 'list'" header="Lista de Productos" class="m-1">
+        <div class="table-section">
+            <p-table 
+                [value]="applyFilters()" 
+                [paginator]="true" 
+                [rows]="10"
+                [showCurrentPageReport]="true"
+                currentPageReportTemplate="Mostrando {first} - {last} de {totalRecords} productos"
+                [rowsPerPageOptions]="[10, 25, 50]"
+                styleClass="p-datatable-gridlines">
+                
+                <!-- Table Headers -->
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width: 100px">Imagen</th>
+                        <th pSortableColumn="name">Nombre <p-sortIcon field="name"></p-sortIcon></th>
+                        <th pSortableColumn="descripcion">Descripción <p-sortIcon field="descripcion"></p-sortIcon></th>
+                        <th pSortableColumn="price">Precio <p-sortIcon field="price"></p-sortIcon></th>
+                        <th pSortableColumn="stock">Stock <p-sortIcon field="stock"></p-sortIcon></th>
+                        <th pSortableColumn="categoryName">Categoría <p-sortIcon field="categoryName"></p-sortIcon></th>
+                        <th pSortableColumn="activo">Estatus <p-sortIcon field="activo"></p-sortIcon></th>
+                        <th style="width: 8rem">Acciones</th>
+                    </tr>
+                </ng-template>
+
+                <!-- Table Body -->
+                <ng-template pTemplate="body" let-item>
+                    <tr>
+                        <td>
+                            <p-image [src]="item.imageUrl || '/assets/img/no-image.png'" 
+                                    alt="Imagen del producto" 
+                                    width="80"
+                                    height="80"
+                                    [preview]="true">
+                            </p-image>
+                        </td>
+                        <td>{{item.name}}</td>
+                        <td>{{item.descripcion}}</td>
+                        <td>{{formatCurrency(item.price)}}</td>
+                        <td>{{item.stock}}</td>
+                        <td>{{item.categoryName}}</td>
+                        <td>
+                            <span [class]="item.activo ? 'status-active' : 'status-inactive'">
+                                {{item.activo ? 'Activo' : 'Inactivo'}}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="flex gap-2">
+                                <button 
+                                    pButton 
+                                    icon="pi pi-pencil" 
+                                    class="p-button-rounded p-button-warning" 
+                                    (click)="showEditDialog(item)"
+                                    pTooltip="Editar Producto">
+                                </button>
+                                <button 
+                                    pButton 
+                                    icon="pi pi-trash" 
+                                    class="p-button-rounded p-button-danger" 
+                                    (click)="deleteItem(item)"
+                                    pTooltip="Eliminar Producto">
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="8">No se encontraron productos.</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </p-card>
+
+    <!-- Grid View -->
+    <p-card *ngIf="currentView === 'grid'" header="Catálogo de Productos" class="m-1">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <div *ngFor="let item of applyFilters()" class="col-span-1">
+                <p-card styleClass="h-full">
+                    <ng-template pTemplate="header">
+                        <div class="relative">
+                            <p-image [src]="item.imageUrl || '/assets/img/no-image.png'" 
+                                    alt="Imagen del producto"
+                                    [preview]="true"
+                                    class="w-full product-image">
+                            </p-image>
+                            <span [class]="'status-badge ' + (item.activo ? 'status-active' : 'status-inactive')">
+                                {{item.activo ? 'Activo' : 'Inactivo'}}
+                            </span>
+                        </div>
+                    </ng-template>
+                    <div class="flex flex-column gap-2">
+                        <h4 class="m-0 text-xl font-bold">{{item.name}}</h4>
+                        <p class="m-0 text-gray-600">{{item.descripcion}}</p>
+                        <div class="flex justify-content-between align-items-center">
+                            <span class="font-bold text-xl">{{formatCurrency(item.price)}}</span>
+                            <span class="text-sm">Stock: {{item.stock}}</span>
+                        </div>
+                        <p class="m-0 text-sm text-gray-500">{{item.categoryName}}</p>
+                        <div class="flex gap-2 mt-3">
+                            <button 
+                                pButton 
+                                icon="pi pi-pencil" 
+                                class="p-button-rounded p-button-warning" 
+                                (click)="showEditDialog(item)"
+                                pTooltip="Editar Producto">
+                            </button>
+                            <button 
+                                pButton 
+                                icon="pi pi-trash" 
+                                class="p-button-rounded p-button-danger" 
+                                (click)="deleteItem(item)"
+                                pTooltip="Eliminar Producto">
+                            </button>
+                        </div>
+                    </div>
+                </p-card>
+            </div>
+        </div>
+    </p-card>
 </div>
 
-<p-table [value]="items" [paginator]="true" [rows]="10" [globalFilterFields]="['nombre', 'estado']" [filters]="{ nombre: { value: search }, estado: { value: statusFilter } }">
-  <ng-template pTemplate="header">
-    <tr>
-      <th>Nombre</th>
-      <th>Estado</th>
-    </tr>
-  </ng-template>
-  <ng-template pTemplate="body" let-item>
-    <tr>
-      <td>{{ item.nombre }}</td>
-      <td>{{ item.estado }}</td>
-    </tr>
-  </ng-template>
-</p-table>
+<!-- Create/Edit Dialog -->
+<p-dialog 
+    [(visible)]="displayDialog" 
+    [header]="dialogMode === 'create' ? 'Crear Producto' : 'Editar Producto'"
+    [modal]="true" 
+    [style]="{ width: '450px' }" 
+    [draggable]="false" 
+    [resizable]="false">
+    
+    <div class="flex flex-column gap-3">
+        <div class="flex flex-column gap-2">
+            <label htmlFor="image">Imagen</label>
+            <!-- ADD FILE UPLOAD HERE -->
+            <small class="text-gray-500">Tamaño máximo: 1MB. Formatos: jpg, png, gif</small>
+        </div>
 
-<app-developement [title]="'INVENTORY MODULE'"></app-developement>
+        <div class="flex flex-column gap-2">
+            <label htmlFor="name">Nombre</label>
+            <input 
+                pInputText 
+                id="name"
+                [(ngModel)]="newItem.name" 
+                required 
+                autofocus 
+                [ngClass]="{'ng-invalid ng-dirty': !newItem.name && newItem.name !== undefined}" />
+        </div>
+
+        <div class="flex flex-column gap-2">
+            <label htmlFor="descripcion">Descripción</label>
+            <input 
+                pInputText 
+                id="descripcion"
+                [(ngModel)]="newItem.descripcion" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+            <div class="flex flex-column gap-2">
+                <label htmlFor="price">Precio</label>
+                <p-inputNumber 
+                    id="price" 
+                    [(ngModel)]="newItem.price" 
+                    mode="currency" 
+                    currency="MXN"
+                    locale="es-MX">
+                </p-inputNumber>
+            </div>
+
+            <div class="flex flex-column gap-2">
+                <label htmlFor="stock">Stock</label>
+                <p-inputNumber 
+                    id="stock" 
+                    [(ngModel)]="newItem.stock" 
+                    [showButtons]="true" 
+                    [min]="0">
+                </p-inputNumber>
+            </div>
+        </div>
+
+        <div class="flex flex-column gap-2">
+            <label htmlFor="category">Categoría</label>
+
+            <p-select [options]="categories" [(ngModel)]="newItem.categoryId" optionLabel="name" optionValue="id" placeholder="Seleccione una categoría" class="w-full md:w-56" />
+        </div>
+
+        <div class="flex align-items-center gap-2">
+            <p-checkbox 
+                [(ngModel)]="newItem.activo" 
+                [binary]="true" 
+                inputId="activo">
+            </p-checkbox>
+            <label for="activo" class="ml-2">Activo</label>
+        </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+        <button 
+            pButton 
+            label="Cancelar" 
+            icon="pi pi-times" 
+            (click)="displayDialog=false" 
+            class="p-button-text">
+        </button>
+        <button 
+            pButton 
+            label="Guardar" 
+            icon="pi pi-check" 
+            (click)="saveItem()" 
+            [disabled]="!newItem.name || !newItem.categoryId">
+        </button>
+    </ng-template>
+</p-dialog>
+
+<!-- Delete Confirmation Dialog -->
+<p-dialog 
+    [(visible)]="displayDeleteDialog" 
+    header="Confirmar Eliminación"
+    [modal]="true" 
+    [style]="{ width: '450px' }" 
+    [draggable]="false" 
+    [resizable]="false">
+    
+    <div class="flex flex-column gap-3">
+        <p>¿Está seguro que desea eliminar el producto "{{selectedItem?.name}}"?</p>
+        <p class="text-sm text-gray-500">Esta acción no se puede deshacer.</p>
+    </div>
+
+    <ng-template pTemplate="footer">
+        <button 
+            pButton 
+            label="Cancelar" 
+            icon="pi pi-times" 
+            (click)="displayDeleteDialog=false" 
+            class="p-button-text">
+        </button>
+        <button 
+            pButton 
+            label="Eliminar" 
+            icon="pi pi-trash" 
+            (click)="confirmDelete()" 
+            severity="danger">
+        </button>
+    </ng-template>
+</p-dialog>
