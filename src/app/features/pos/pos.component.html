@@ -1,0 +1,19 @@
+<div class="custom-container">
+    <!-- Header with Add Button -->
+    <p-card class="m-1">
+        <div class="flex justify-content-between header-section">
+            <h3>Punto de Venta</h3>
+        </div>
+    </p-card>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"> 
+        <!-- Inventory and prmotions -->
+        <div class="col-span-3">
+            <app-sale-inventory></app-sale-inventory>
+        </div>
+        <!-- Sale Detail -->
+        <div class="col-span-1">
+            <app-sale-detail></app-sale-detail>
+        </div>
+    </div>
+</div>
